@@ -1,0 +1,26 @@
+import numpy as np
+
+np.random.seed(0)
+matrix = np.random.randint(1, 51, size=(5, 4))
+print("Original Array:\n", matrix)
+
+anti_diagonal = [matrix[i, -i-1] for i in range(min(matrix.shape))]
+print("\nAnti-diagonal Elements (Top-right to Bottom-left):", anti_diagonal)
+
+row_max = np.max(matrix, axis=1)
+print("\nMaximum Value in Each Row:", row_max)
+
+mean_val = np.mean(matrix)
+filtered_array = matrix[matrix <= mean_val]
+print("\nOverall Mean:", mean_val)
+print("Elements Less Than or Equal to the Mean:\n", filtered_array)
+
+def numpy_boundary_traversal(mat):
+    top = list(mat[0, :])
+    right = list(mat[1:-1, -1])
+    bottom = list(mat[-1, ::-1])
+    left = list(mat[-2:0:-1, 0])
+    return top + right + bottom + left
+
+boundary_elements = numpy_boundary_traversal(matrix)
+print("\nBoundary Elements in Clockwise Order:", boundary_elements)
