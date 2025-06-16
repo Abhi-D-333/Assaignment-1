@@ -1,0 +1,46 @@
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+good_feedback = ["Loved the product", "Excellent quality", "Fast delivery", "Very useful", "Highly recommend",
+                 "Good value", "Amazing experience", "Great service", "Works perfectly", "Best purchase",
+                 "Fantastic support", "Top-notch", "Very satisfied", "Five stars", "Product is awesome",
+                 "Impressed", "Great design", "Reliable", "Convenient", "Superb",
+                 "Helpful", "Quick shipping", "Perfect size", "Really nice", "Affordable",
+                 "Exceeds expectations", "Comfortable", "Elegant", "Just right", "Exactly what I needed",
+                 "Love it", "Highly efficient", "Will buy again", "Great material", "Very pleased",
+                 "Wonderful", "Nice packaging", "User-friendly", "No complaints", "Durable",
+                 "Excellent customer support", "Value for money", "Premium feel", "As described", "Nice color",
+                 "Perfect match", "Smooth experience", "No issues", "Well built", "Fits well"]
+
+bad_feedback = ["Horrible experience", "Low quality", "Very disappointed", "Not as described", "Poor service",
+                "Broken on arrival", "Waste of money", "Too expensive", "Useless", "Not working",
+                "Terrible support", "Hate it", "Worst product", "Completely useless", "Regret buying",
+                "Damaged", "Cheap material", "Uncomfortable", "Faulty item", "Slow delivery",
+                "Doesn’t work", "Bad packaging", "Wrong size", "Not reliable", "Poor build",
+                "Looks cheap", "Very noisy", "Returned it", "Awful smell", "Broke quickly",
+                "Unresponsive", "Outdated", "Low performance", "Unhelpful", "Inaccurate description",
+                "Won’t recommend", "Horrible color", "Battery issue", "Slow response", "Scratched",
+                "Never again", "Too small", "Low resolution", "Missing parts", "Defective",
+                "Very bad", "Couldn’t use", "Late delivery", "Stopped working", "Very flimsy"]
+
+texts = good_feedback + bad_feedback
+labels = ['good'] * 50 + ['bad'] * 50
+
+df = pd.DataFrame({'Text': texts, 'Label': labels})
+
+vectorizer = TfidfVectorizer(max_features=300, lowercase=True, stop_words='english')
+X = vectorizer.fit_transform(df['Text'])
+y = df['Label']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+model = LogisticRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+print(classification_report(y_test, y_pred))
+
+def text_preprocess_vectorize(texts, vectorizer):
+    return vectorizer.transform(texts)
