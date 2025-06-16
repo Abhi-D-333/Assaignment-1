@@ -1,0 +1,49 @@
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
+
+positive_reviews = ["Great movie", "Loved the acting", "Fantastic plot", "Amazing direction", "Enjoyed it", 
+                    "Outstanding film", "Superb storytelling", "Highly recommend", "Beautiful scenes", "Awesome experience",
+                    "Excellent performance", "Best movie ever", "Heartwarming story", "Incredible visuals", "Perfect execution",
+                    "Top notch", "Emotionally touching", "Loved the characters", "Very entertaining", "Really liked it",
+                    "Great soundtrack", "Will watch again", "Engaging script", "Powerful message", "Inspirational",
+                    "Unforgettable", "Oscar-worthy", "Hats off", "Fun and emotional", "Good vibes",
+                    "Spectacular", "10/10", "Mind blowing", "So good", "Touching and deep", "Loved the pacing",
+                    "Good direction", "Captivating", "Impressive", "Thrilling", "Brilliant", "Simply amazing",
+                    "Deep and meaningful", "Feel good film", "Everything was perfect", "Couldn’t stop watching", 
+                    "Totally worth it", "Just wow", "Magical", "Well made"]
+
+negative_reviews = ["Terrible movie", "Worst acting", "Boring plot", "Poor direction", "Didn't enjoy it",
+                    "Disappointing film", "Bad storytelling", "Do not recommend", "Ugly scenes", "Awful experience",
+                    "Terrible performance", "Worst movie ever", "Cold and lifeless", "Bad visuals", "Sloppy execution",
+                    "Low quality", "No emotions", "Hated the characters", "Very boring", "Really hated it",
+                    "Annoying soundtrack", "Will never watch again", "Weak script", "No message", "Pointless",
+                    "Forgettable", "Not worth watching", "Shameful", "Unfunny and dull", "Bad vibes",
+                    "Ridiculous", "0/10", "Brain numbing", "So bad", "Stupid and shallow", "Terrible pacing",
+                    "Bad direction", "Sleep inducing", "Unimpressive", "Predictable", "Unwatchable", "Simply bad",
+                    "Shallow and confusing", "Feel bad film", "Everything was off", "Couldn’t finish it", 
+                    "Total waste", "Just no", "Lifeless", "Poorly made"]
+
+reviews = positive_reviews + negative_reviews
+sentiments = ['positive'] * 50 + ['negative'] * 50
+
+df = pd.DataFrame({'Review': reviews, 'Sentiment': sentiments})
+
+vectorizer = CountVectorizer(max_features=500, stop_words='english')
+X = vectorizer.fit_transform(df['Review'])
+y = df['Sentiment']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+model = MultinomialNB()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+def predict_review_sentiment(model, vectorizer, review):
+    X_new = vectorizer.transform([review])
+    return model.predict(X_new)[0]
+
+print(predict_review_sentiment(model, vectorizer, "I loved the story and the visuals"))
